@@ -237,11 +237,11 @@ void CLogger::MultiplexMulti( ENetDirection eDirection, const uint8 *pData, uint
 void CLogger::SendToPipe(const char* filename, const uint8* data, uint32 size)
 {
     static HANDLE pipe = INVALID_HANDLE_VALUE;
-    DWORD pid = g_TargetPID;
 
     // создаем пайп один раз
     if (pipe == INVALID_HANDLE_VALUE)
     {
+        DWORD pid = GetCurrentProcessId();
         std::string pipeName = "\\\\.\\pipe\\NetHookPipe_" + std::to_string(g_TargetPID);
 
         pipe = CreateFileA(
@@ -277,4 +277,5 @@ void CLogger::SendToPipe(const char* filename, const uint8* data, uint32 size)
     WriteFile(pipe, &size, sizeof(size), &written, NULL);
     WriteFile(pipe, data, size, &written, NULL);
 }
+
 
