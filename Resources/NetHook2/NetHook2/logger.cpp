@@ -250,18 +250,22 @@ void CLogger::SendToPipe(const char* filename, const uint8* data, uint32 size)
 
     uint32 nameLen = strlen(filename);
 
+    uint64 timestamp = 0;
+    std::string dir = m_LogDir;
+    if (!dir.empty() && dir.back() == '\\')
+        dir.pop_back();
+    size_t pos = dir.find_last_of('\\');
+    if (pos != std::string::npos)
+    {
+        std::string t = dir.substr(pos + 1);
+        timestamp = std::stoull(t);
+    }
+
     DWORD written;
-
-    // ——— отправляем длину имени файла ———
     WriteFile(pipe, &nameLen, 4, &written, NULL);
-
-    // ——— отправляем имя файла ———
     WriteFile(pipe, filename, nameLen, &written, NULL);
-
-    // ——— отправляем длину данных ———
+    WriteFile(pipe, &timestamp, sizeof(timestamp), &written, NULL);
     WriteFile(pipe, &size, 4, &written, NULL);
-
-    // ——— отправляем сами данные ———
     WriteFile(pipe, data, size, &written, NULL);
 
     CloseHandle(pipe);
