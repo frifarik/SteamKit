@@ -235,25 +235,30 @@ void CLogger::MultiplexMulti( ENetDirection eDirection, const uint8 *pData, uint
 
 void CLogger::SendToPipe(const char* filename, const uint8* data, uint32 size)
 {
-    HANDLE pipe = CreateFileA(
-        "\\\\.\\pipe\\NetHookPipe",
-        GENERIC_WRITE,
-        0,
-        NULL,
-        OPEN_EXISTING,
-        0,
-        NULL
-    );
+    static HANDLE pipe = INVALID_HANDLE_VALUE;
 
+    // создаем пайп один раз
     if (pipe == INVALID_HANDLE_VALUE)
-        return;
+    {
+        pipe = CreateFileA(
+            "\\\\.\\pipe\\NetHookPipe",
+            GENERIC_WRITE,
+            0,
+            NULL,
+            OPEN_EXISTING,
+            0,
+            NULL
+        );
+        if (pipe == INVALID_HANDLE_VALUE)
+            return;
+    }
 
-    uint32 nameLen = strlen(filename);
+    uint32 nameLen = (uint32)strlen(filename);
 
+    // timestamp из папки
     uint64 timestamp = 0;
     std::string dir = m_LogDir;
-    if (!dir.empty() && dir.back() == '\\')
-        dir.pop_back();
+    if (!dir.empty() && dir.back() == '\\') dir.pop_back();
     size_t pos = dir.find_last_of('\\');
     if (pos != std::string::npos)
     {
@@ -262,10 +267,9 @@ void CLogger::SendToPipe(const char* filename, const uint8* data, uint32 size)
     }
 
     DWORD written;
-    WriteFile(pipe, &nameLen, 4, &written, NULL);
+    WriteFile(pipe, &nameLen, sizeof(nameLen), &written, NULL);
     WriteFile(pipe, filename, nameLen, &written, NULL);
     WriteFile(pipe, &timestamp, sizeof(timestamp), &written, NULL);
-    WriteFile(pipe, &size, 4, &written, NULL);
+    WriteFile(pipe, &size, sizeof(size), &written, NULL);
     WriteFile(pipe, data, size, &written, NULL);
 }
-
