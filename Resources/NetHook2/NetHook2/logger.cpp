@@ -242,7 +242,8 @@ void CLogger::SendToPipe(const char* filename, const uint8* data, uint32 size)
     if (pipe == INVALID_HANDLE_VALUE)
     {
         DWORD pid = GetCurrentProcessId();
-        std::string pipeName = "\\\\.\\pipe\\NetHookPipe_" + std::to_string(g_TargetPID);
+        std::string pipeName = "\\\\.\\pipe\\NetHookPipe_" + std::to_string(pid);
+        LogConsole("Creating pipe for process %u: %s\n", pid, pipeName.c_str());
 
         pipe = CreateFileA(
             pipeName.c_str(),
@@ -277,5 +278,6 @@ void CLogger::SendToPipe(const char* filename, const uint8* data, uint32 size)
     WriteFile(pipe, &size, sizeof(size), &written, NULL);
     WriteFile(pipe, data, size, &written, NULL);
 }
+
 
 
