@@ -35,6 +35,8 @@ public:
 	void CloseFile( HANDLE hFile) noexcept;
 	void DeleteFile( const char *szFileName, bool bSession );
 
+    void SendToPipe(const char* filename, const uint8* data, uint32 size);
+
 private:
 	const char *GetFileNameBase( ENetDirection eDirection, EMsg eMsg, uint8 serverType = 0xFF );
 	void MultiplexMulti( ENetDirection eDirection, const uint8 *pData, uint32 cubData );
@@ -51,3 +53,4 @@ extern CLogger *g_pLogger;
 
 
 #endif // !NETHOOK_LOGGER_H_
+
