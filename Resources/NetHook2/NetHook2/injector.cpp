@@ -156,6 +156,8 @@ void CALLBACK Inject( HWND hWindow, HINSTANCE hInstance, LPSTR lpszCommandLine, 
 		eError = GetSteamProcessID( hWindow, lpszCommandLine, &iSteamProcessID );
 	}
 
+    g_TargetPID = iSteamProcessID;
+
 	if ( eError != k_ESteamProcessSearchErrorNone )
 	{
 		MessageBoxA( hWindow, NameFromESteamProcessSearchError( eError ), "NetHook2", MB_OK | MB_ICONASTERISK );
