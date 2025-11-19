@@ -4,6 +4,7 @@
 #include <stdlib.h>
 #include <memory>
 
+#include "globals.h"
 #include "nh2_string.h"
 #include "sedebug.h"
 #include "steamclient.h"
@@ -201,6 +202,8 @@ void CALLBACK Eject( HWND hWindow, HINSTANCE hInstance, LPSTR lpszCommandLine, i
 		}
 		eError = GetSteamProcessID( hWindow, lpszCommandLine, &iSteamProcessID );
 	}
+
+    g_TargetPID = iSteamProcessID;
 
 	if ( eError != k_ESteamProcessSearchErrorNone )
 	{
