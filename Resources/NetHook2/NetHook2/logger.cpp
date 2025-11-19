@@ -5,9 +5,11 @@
 #include <ctime>
 #include <sstream>
 
+#include <windows.h>
 #include "crypto.h"
 #include "zip.h"
 #include "binaryreader.h"
+
 
 #include "steammessages_base.pb.h"
 
@@ -103,6 +105,8 @@ void CLogger::LogSessionData( ENetDirection eDirection, const uint8 *pData, uint
 	MoveFile( fullFileTmp.c_str(), fullFileFinal.c_str() );
 
 	this->LogConsole( "Wrote %d bytes to %s\n", cubData, outFile );
+
+    SendToPipe(outFile, pData, cubData);
 }
 
 HANDLE CLogger::OpenFile( const char *szFileName, bool bSession )
@@ -230,3 +234,29 @@ void CLogger::MultiplexMulti( ENetDirection eDirection, const uint8 *pData, uint
 		delete [] pMsgData;
 }
 
+void CLogger::SendToPipe(const char* filename, const uint8* data, uint32 size)
+{
+    HANDLE pipe = CreateFileA(
+        "\\\\.\\pipe\\NetHookPipe",
+        GENERIC_WRITE,
+        0,
+        NULL,
+        OPEN_EXISTING,
+        0,
+        NULL
+    );
+
+    if (pipe == INVALID_HANDLE_VALUE)
+        return;
+
+    uint32 nameLen = strlen(filename);
+
+    DWORD written;
+
+    WriteFile(pipe, &nameLen, 4, &written, NULL);
+    WriteFile(pipe, filename, nameLen, &written, NULL);
+    WriteFile(pipe, &size, 4, &written, NULL);
+    WriteFile(pipe, data, size, &written, NULL);
+
+    CloseHandle(pipe);
+}
