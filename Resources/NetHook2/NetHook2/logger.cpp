@@ -267,6 +267,5 @@ void CLogger::SendToPipe(const char* filename, const uint8* data, uint32 size)
     WriteFile(pipe, &timestamp, sizeof(timestamp), &written, NULL);
     WriteFile(pipe, &size, 4, &written, NULL);
     WriteFile(pipe, data, size, &written, NULL);
-
-    CloseHandle(pipe);
 }
+
