@@ -189,6 +189,7 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="binaryreader.cpp" />
+    <ClCompile Include="globals.cpp" />
     <ClCompile Include="crypto.cpp" />
     <ClCompile Include="csimpledetour.cpp" />
     <ClCompile Include="csimplescan.cpp" />
@@ -205,6 +206,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="binaryreader.h" />
+    <ClInclude Include="globals.h" />
     <ClInclude Include="crypto.h" />
     <ClInclude Include="csimpledetour.h" />
     <ClInclude Include="csimplescan.h" />
@@ -228,4 +230,5 @@
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
   </ImportGroup>
+
 </Project>
