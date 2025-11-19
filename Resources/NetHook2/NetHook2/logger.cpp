@@ -9,6 +9,7 @@
 #include "crypto.h"
 #include "zip.h"
 #include "binaryreader.h"
+#include "globals.h"
 
 #include "steammessages_base.pb.h"
 
@@ -236,12 +237,15 @@ void CLogger::MultiplexMulti( ENetDirection eDirection, const uint8 *pData, uint
 void CLogger::SendToPipe(const char* filename, const uint8* data, uint32 size)
 {
     static HANDLE pipe = INVALID_HANDLE_VALUE;
+    DWORD pid = g_TargetPID;
 
     // создаем пайп один раз
     if (pipe == INVALID_HANDLE_VALUE)
     {
+        std::string pipeName = "\\\\.\\pipe\\NetHookPipe_" + std::to_string(g_TargetPID);
+
         pipe = CreateFileA(
-            "\\\\.\\pipe\\NetHookPipe",
+            pipeName.c_str(),
             GENERIC_WRITE,
             0,
             NULL,
@@ -273,3 +277,4 @@ void CLogger::SendToPipe(const char* filename, const uint8* data, uint32 size)
     WriteFile(pipe, &size, sizeof(size), &written, NULL);
     WriteFile(pipe, data, size, &written, NULL);
 }
+
